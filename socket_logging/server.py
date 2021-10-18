@@ -27,19 +27,22 @@ def recv_all(conn, length):
 
 
 class ServerHandler(RotatingFileHandler):
-    """
-    Handler for logging to a set of files in Onprem Cluster
-    when the current file reaches a certain size.
-
-    The class is inherited from logging.handlers.RotatingFileHandler
-    but with a redefined rotating function including:
-
-        - Renaming Old log files with a timestamp as suffix
-        - Don't remove files exceed the limit of backupcount to avoiding
-        messing up with logging platform
-    """
-
     def __init__(self, filename, maxBytes, suffix="%Y-%m-%d.%H%M%S"):
+        """Preferred handler for server to do file logging and rotation
+
+        The class is inherited from logging.handlers.RotatingFileHandler
+        but with a redefined rotating function including:
+
+            - Renaming Old log files a suffix (default timestamp suffix with format "%Y-%m-%d.%H%M%S")
+            - Don't remove files exceed the limit of backupcount
+
+        Due to the server's batching methodology, the rotated file size is less than "maxbytes + batch_size"
+
+        Args:
+            filename (str): filename of log file
+            maxBytes (int): max byte before rotation
+            suffix (str, optional): suffix of rotated files. Defaults to "%Y-%m-%d.%H%M%S".
+        """
         self.suffix = suffix  # timestamp marked for rotation file
         super().__init__(filename=filename, maxBytes=maxBytes)
 
@@ -94,19 +97,29 @@ class Server:
     def __init__(
         self, defined_handler, server_address="/tmp/socket", batch_size=20000
     ) -> None:
+        """Server for receiving logs from client and do writting logs in batch to files.
+
+        Args:
+            defined_handler (RotatingFileHandler): [handler for writing logs, preferred "ServerHandler"]
+            server_address (str, optional): [server socket address]. Defaults to "/tmp/socket".
+            batch_size (int, optional): [batch size for writting logs to file in batch]. Defaults to 20000.
+        """
         try:
             os.remove(server_address)
         except OSError:
             pass
+        self.logger = logging.getLogger(__name__)
+        register_logger(self.logger)
+
         self.socket = socket.socket(socket.AF_UNIX, socket.SOCK_STREAM)
         self.socket.bind(server_address)
         self.socket.listen()
-        self.logger = logging.getLogger(__name__)
-        register_logger(self.logger)
         self.logger.info(f"listening on {server_address}")
         self.socket.setblocking(False)
+
         self.sel = selectors.DefaultSelector()
         self.sel.register(self.socket, selectors.EVENT_READ, data=self.accept)
+
         self.handler = defined_handler
         self.thread = Thread(target=self.run)
         self.batch_size = batch_size
@@ -127,13 +140,14 @@ class Server:
         if length_bytes:
             length = struct.unpack(LENGTH_BYTE_FORMAT, length_bytes)[0]
             self.total_length += length
-            self.bytes += recv_all(conn, length)
+            payload = recv_all(conn, length)
+            self.bytes += payload
             if self.total_length >= self.batch_size:
                 self.handler.emit(self.bytes.decode())
                 self.bytes = bytearray()
                 self.total_length = 0
             else:
-                self.bytes +=  LINE_BREAK
+                self.bytes += LINE_BREAK
         if self.termination.is_set():
             self.logger.info(f"current total length {self.total_length}")
             self.handler.emit(self.bytes.decode())

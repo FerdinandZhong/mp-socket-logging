@@ -9,6 +9,12 @@ LENGTH_BYTE_FORMAT = "!I"
 
 
 class Client(logging.Handler):
+    """Client which is a logging.Handler, added to the logger inside the process worker
+
+    Args:
+        logging (str): socket address to connect to server
+    """
+
     def __init__(self, socket_addr) -> None:
         super().__init__()
         self.socket = socket.socket(socket.AF_UNIX)
@@ -47,8 +53,20 @@ class Client(logging.Handler):
 
 
 def register_handler(
-    target_logger, logging_level, formatter=None, socket_addr="/tmp/socket"
+    target_logger: logging.Logger,
+    logging_level: logging._Level,
+    formatter: logging.Formatter=None,
+    socket_addr="/tmp/socket",
 ):
+    """[summary]
+
+    Args:
+        target_logger (logging.Logger): target logger to bind the Client instance
+        logging_level (logging._Level): logging level of Client instance
+        formatter (logging.Formatter, optional): formatter added to the handler. Defaults to None.
+             If None, default format is "%(asctime)s - %(name)s - [%(levelname)s]: %(message)s"
+        socket_addr (str, optional): socket address to connect to server. Defaults to "/tmp/socket".
+    """
     if not formatter:
         formatter = logging.Formatter(
             "%(asctime)s - %(name)s - [%(levelname)s]: %(message)s"

@@ -7,9 +7,6 @@ here = path.abspath(path.dirname(__file__))
 with open("README.md", "r", encoding="utf-8") as f:
     readme = f.read()
 
-with open(path.join(here, "requirements.txt"), encoding="utf-8") as f:
-    requires = [req.strip() for req in f if req]
-
 setup(
     name="mp-socket-logging",
     version="0.1.0",
@@ -23,13 +20,6 @@ setup(
         "Programming Language :: Python :: 3",
     ],
     python_requires=">3",
-    entry_points={
-        "console_scripts": [
-            # if you want to add command
-            # 'train=libname::train',
-        ]
-    },
-    install_requires=requires,
     extras_require={
         "dev": [
             "pytest>=6",
@@ -37,7 +27,6 @@ setup(
             "black>=20.8b1",
             "isort>=5.6",
             "autoflake>=1.4",
-            "mkdocs-material>=6",
         ],
     },
 )
