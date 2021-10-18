@@ -23,7 +23,7 @@ class Client(logging.Handler):
         register_logger(self.logger)
         try:
             self.socket.connect(socket_addr)
-            self.logger.info(f"socket connect to /tmp/serving.socket")
+            self.logger.info(f"socket connect to {socket_addr}")
         except BrokenPipeError as err:
             self.logger.warning(f"socket is broken: {err}")
         except FileNotFoundError as err:
@@ -55,7 +55,7 @@ class Client(logging.Handler):
 def register_handler(
     target_logger: logging.Logger,
     logging_level: logging._Level,
-    formatter: logging.Formatter=None,
+    formatter: logging.Formatter = None,
     socket_addr="/tmp/socket",
 ):
     """[summary]

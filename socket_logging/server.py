@@ -95,7 +95,10 @@ class ServerHandler(RotatingFileHandler):
 
 class Server:
     def __init__(
-        self, defined_handler, server_address="/tmp/socket", batch_size=20000
+        self,
+        defined_handler: logging.Handler,
+        server_address="/tmp/socket",
+        batch_size=20000,
     ) -> None:
         """Server for receiving logs from client and do writting logs in batch to files.
 
