@@ -54,7 +54,7 @@ class Client(logging.Handler):
 
 def register_handler(
     target_logger: logging.Logger,
-    logging_level: logging._Level,
+    logging_level,
     formatter: logging.Formatter = None,
     socket_addr="/tmp/socket",
 ):
@@ -62,7 +62,7 @@ def register_handler(
 
     Args:
         target_logger (logging.Logger): target logger to bind the Client instance
-        logging_level (logging._Level): logging level of Client instance
+        logging_level (logging level): logging level of Client instance
         formatter (logging.Formatter, optional): formatter added to the handler. Defaults to None.
              If None, default format is "%(asctime)s - %(name)s - [%(levelname)s]: %(message)s"
         socket_addr (str, optional): socket address to connect to server. Defaults to "/tmp/socket".
