@@ -9,7 +9,7 @@ with open("README.md", "r", encoding="utf-8") as f:
 
 setup(
     name="mp-socket-logging",
-    version="0.1.1",
+    version="0.1.0",
     description="A small toolkit for python multiprocessing file logging",
     long_description=readme,
     author="Zhong Qishuai",
