@@ -11,20 +11,6 @@ pip install mp-socket-logging
 ```
 
 ## Features
-```
-                           +---------------+
-             +<------------+     client    |
- +-------+-+-+             +---------------+
- |           |
- +  Socket   |             +---------------+
- |           +<------------+     client    |
- +---------+-+             +---------------+
-       |
-       |                 (main process)
-       |               +---------------+          +--------------+
-       +-------------->+     server    +--------->+   log file   +
-                       +---------------+          +--------------+
-```
 - The package uses unix socket for communication between processes.
 - I/O operations will all be done by server in main process.
 - Client Class itself is a logging.Handler which will be added to user's logger inside child process. Client handler will do the formatting and sending the logs to server side through socket.
