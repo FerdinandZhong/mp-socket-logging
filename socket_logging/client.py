@@ -58,7 +58,7 @@ def register_handler(
     formatter: logging.Formatter = None,
     socket_addr="/tmp/socket",
 ):
-    """[summary]
+    """Register the Client instance to the logger
 
     Args:
         target_logger (logging.Logger): target logger to bind the Client instance

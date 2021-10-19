@@ -1,18 +1,17 @@
 import argparse
 import logging
 import multiprocessing as mp
-import time
 import os
+import time
 
-from socket_logging import register_handler
-from socket_logging import Server, ServerHandler
-
+from socket_logging import Server, ServerHandler, register_handler
 
 MAX_BYTES = 100000
 BATCH_SIZE = 2000
 LOG_FILE = "data/log/socket.log"
 TEST_ROUND = 500
 WORKER_NUM = 5
+
 
 def worker(text):
     client_logger = logging.getLogger("client_logger")
@@ -23,8 +22,12 @@ def worker(text):
         client_logger.info(f"{i} {text} from {pid}")
         time.sleep(0.01)
 
+
 def sample_running(text):
-    procs = [mp.get_context("fork").Process(target=worker, args=(text,)) for _ in range(WORKER_NUM)]
+    procs = [
+        mp.get_context("spawn").Process(target=worker, args=(text,))
+        for _ in range(WORKER_NUM)
+    ]
 
     for proc in procs:
         proc.start()

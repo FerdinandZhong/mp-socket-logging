@@ -1,15 +1,12 @@
 default: link test
 
-PY_SOURCE_FILES=socket_logging/ setup.py
+PY_SOURCE_FILES=socket_logging/ setup.py tests/ examples/
 
 install:
 	pip install -e .[dev]
 
 test:
 	pytest tests -vv
-
-doc:
-	mkdocs serve
 
 clean:
 	rm -rf build/ dist/ *.egg-info .pytest_cache
