@@ -9,9 +9,10 @@ with open("README.md", "r", encoding="utf-8") as f:
 
 setup(
     name="mp-socket-logging",
-    version="0.1.1",
+    version="0.1.0",
     description="A small toolkit for python multiprocessing file logging",
     long_description=readme,
+    long_description_content_type="text/markdown",
     author="Zhong Qishuai",
     author_email="ferdinandzhong@gmail.com",
     url="https://git.garena.com/shopee-ds/ml-platform/sre-utils",
