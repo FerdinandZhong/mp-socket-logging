@@ -9,12 +9,12 @@ on:
     paths:
       - '.github/workflows/check.yml'
       - 'socket_logging/**'
-      - 'test/**'
-      - 'example/**'
+      - 'tests/**'
+      - 'examples/**'
       - 'setup.py'
 
 jobs:
-  lint:
+  lint-test:
     runs-on: ubuntu-latest
     timeout-minutes: 5
     steps:

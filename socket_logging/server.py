@@ -97,7 +97,7 @@ class Server:
     def __init__(
         self,
         defined_handler: logging.Handler,
-        server_address="/tmp/socket",
+        socket_address="/tmp/socket",
         batch_size=20000,
     ) -> None:
         """Server for receiving logs from client and do writting logs in batch to files.
@@ -108,16 +108,16 @@ class Server:
             batch_size (int, optional): [batch size for writting logs to file in batch]. Defaults to 20000.
         """
         try:
-            os.remove(server_address)
+            os.remove(socket_address)
         except OSError:
             pass
         self.logger = logging.getLogger(__name__)
         register_logger(self.logger)
 
         self.socket = socket.socket(socket.AF_UNIX, socket.SOCK_STREAM)
-        self.socket.bind(server_address)
+        self.socket.bind(socket_address)
         self.socket.listen()
-        self.logger.info(f"listening on {server_address}")
+        self.logger.info(f"listening on {socket_address}")
         self.socket.setblocking(False)
 
         self.sel = selectors.DefaultSelector()
