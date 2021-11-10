@@ -18,7 +18,7 @@ def worker(text):
     formatter = logging.Formatter(
         "%(asctime)s - %(name)s - %(filename)s- [%(levelname)s]: %(message)s"
     )
-    register_handler(client_logger, logging_level=logging.INFO, formatter=formatter)
+    register_handler(client_logger, logging_level=logging.INFO, formatter=formatter, verbose=True)
     client_logger.setLevel(logging.INFO)
     pid = os.getpid()
     for i in range(TEST_ROUND):
@@ -47,7 +47,7 @@ if __name__ == "__main__":
 
     server_handler = ServerHandler(LOG_FILE, maxBytes=MAX_BYTES)
     server_handler.setLevel(logging.INFO)
-    server = Server(server_handler, batch_size=BATCH_SIZE)
+    server = Server(server_handler, batch_size=BATCH_SIZE, verbose=True)
     server.start()
 
     sample_running(args.text)

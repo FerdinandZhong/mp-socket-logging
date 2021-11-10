@@ -27,12 +27,12 @@ class ColorfulFormatter(logging.Formatter):
         return formatter.format(record)
 
 
-def register_logger(logger=None):
+def register_logger(logger=None, verbose=False):
     """register colorful debug log"""
     if not logger:
         logger = logging.getLogger()
     if not logger.hasHandlers():
         handler = logging.StreamHandler(sys.stderr)
         handler.setFormatter(ColorfulFormatter())
-        logger.setLevel(logging.DEBUG)
+        logger.setLevel(logging.DEBUG) if verbose else logger.setLevel(logging.INFO)
         logger.addHandler(handler)

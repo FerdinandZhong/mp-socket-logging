@@ -99,6 +99,7 @@ class Server:
         defined_handler: logging.Handler,
         socket_address="/tmp/socket",
         batch_size=20000,
+        verbose=False,
     ) -> None:
         """Server for receiving logs from client and do writting logs in batch to files.
 
@@ -112,12 +113,12 @@ class Server:
         except OSError:
             pass
         self.logger = logging.getLogger(__name__)
-        register_logger(self.logger)
+        register_logger(self.logger, verbose)
 
         self.socket = socket.socket(socket.AF_UNIX, socket.SOCK_STREAM)
         self.socket.bind(socket_address)
         self.socket.listen()
-        self.logger.info(f"listening on {socket_address}")
+        self.logger.debug(f"listening on {socket_address}")
         self.socket.setblocking(False)
 
         self.sel = selectors.DefaultSelector()
@@ -131,7 +132,7 @@ class Server:
 
     def accept(self, sock):
         conn, addr = sock.accept()  # Should be ready to read
-        self.logger.info(f"accepted connection from {addr}")
+        self.logger.debug(f"accepted connection from {addr}")
         conn.setblocking(False)
         events = selectors.EVENT_READ
         self.sel.register(conn, events, data=self.read_data)
@@ -152,7 +153,7 @@ class Server:
             else:
                 self.bytes += LINE_BREAK
         if self.termination.is_set():
-            self.logger.info(f"current total length {self.total_length}")
+            self.logger.debug(f"rest log record total length {self.total_length}")
             self.handler.emit(self.bytes.decode())
             self.bytes = bytearray()
             self.sel.unregister(conn)
@@ -179,7 +180,7 @@ class Server:
                 callback = key.data
                 callback(key.fileobj)
             if self.termination.is_set():
-                self.logger.info("termination is set")
+                self.logger.debug("termination is set")
                 break
         self.socket.close()
         self.sel.close()
