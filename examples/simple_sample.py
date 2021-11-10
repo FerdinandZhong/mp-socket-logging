@@ -18,7 +18,9 @@ def worker(text):
     formatter = logging.Formatter(
         "%(asctime)s - %(name)s - %(filename)s- [%(levelname)s]: %(message)s"
     )
-    register_handler(client_logger, logging_level=logging.INFO, formatter=formatter, verbose=True)
+    register_handler(
+        client_logger, logging_level=logging.INFO, formatter=formatter, verbose=True
+    )
     client_logger.setLevel(logging.INFO)
     pid = os.getpid()
     for i in range(TEST_ROUND):
