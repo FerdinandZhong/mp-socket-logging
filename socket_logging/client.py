@@ -15,15 +15,15 @@ class Client(logging.Handler):
         logging (str): socket address to connect to server
     """
 
-    def __init__(self, socket_addr) -> None:
+    def __init__(self, socket_addr, verbose) -> None:
         super().__init__()
         self.socket = socket.socket(socket.AF_UNIX)
         self.socket.settimeout(1)
         self.logger = logging.getLogger(__name__)
-        register_logger(self.logger)
+        register_logger(self.logger, verbose)
         try:
             self.socket.connect(socket_addr)
-            self.logger.info(f"socket connect to {socket_addr}")
+            self.logger.debug(f"socket connect to {socket_addr}")
         except BrokenPipeError as err:
             self.logger.warning(f"socket is broken: {err}")
         except FileNotFoundError as err:
@@ -57,6 +57,7 @@ def register_handler(
     logging_level,
     formatter: logging.Formatter = None,
     socket_addr="/tmp/socket",
+    verbose=False,
 ):
     """Register the Client instance to the logger
 
@@ -71,7 +72,7 @@ def register_handler(
         formatter = logging.Formatter(
             "%(asctime)s - %(name)s - [%(levelname)s]: %(message)s"
         )
-    client = Client(socket_addr)
+    client = Client(socket_addr=socket_addr, verbose=verbose)
     client.setFormatter(formatter)
     client.setLevel(logging_level)
     target_logger.addHandler(client)
